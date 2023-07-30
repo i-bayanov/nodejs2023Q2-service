@@ -47,4 +47,16 @@ export class AlbumService {
     this.findAlbum(id);
     this.albums = Object.fromEntries(Object.entries(this.albums).filter(([key]) => key !== id));
   }
+
+  removeArtistFromAlbums(artistId: string) {
+    this.albums = Object.fromEntries(
+      Object.entries(this.albums).map(([albumId, album]) => {
+        if (album.artistId === artistId) return [albumId, { ...album, artistId: null }];
+        console.log('album artist id:', album.artistId);
+        console.log('artistId to delete:', artistId);
+
+        return [albumId, album];
+      }),
+    );
+  }
 }

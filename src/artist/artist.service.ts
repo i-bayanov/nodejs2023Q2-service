@@ -2,9 +2,12 @@ import { /* ConflictException,*/ Injectable, NotFoundException } from '@nestjs/c
 import { v4 as uuidV4 } from 'uuid';
 
 import { CreateArtistDto, UpdateArtistDto } from './dto';
+import { AlbumService } from 'src/album/album.service';
 
 @Injectable()
 export class ArtistService {
+  constructor(private readonly albumService: AlbumService) {}
+
   private artists: { [id: string]: Artist } = {};
 
   // private checkArtistExistance(createArtistDto: CreateArtistDto) {
@@ -56,5 +59,6 @@ export class ArtistService {
   remove(id: string) {
     this.findArtist(id);
     this.artists = Object.fromEntries(Object.entries(this.artists).filter(([key]) => key !== id));
+    this.albumService.removeArtistFromAlbums(id);
   }
 }
