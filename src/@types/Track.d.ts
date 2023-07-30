@@ -5,3 +5,6 @@ interface Track {
   albumId: string | null; // refers to Album
   duration: number; // integer number
 }
+
+type TCreateTrackDto = Omit<Track, 'id'>;
+type TUpdateTrackDto = Omit<Track, 'id'>;
