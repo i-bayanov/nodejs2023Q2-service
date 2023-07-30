@@ -4,3 +4,6 @@ interface Album {
   year: number;
   artistId: string | null; // refers to Artist
 }
+
+type TCreateAlbumDto = Omit<Album, 'id'>;
+type TUpdateAlbumDto = Omit<Album, 'id'>;
