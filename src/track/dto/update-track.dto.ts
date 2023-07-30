@@ -1,5 +1,5 @@
 import { Transform, TransformFnParams } from 'class-transformer';
-import { IsNotEmpty, IsString, IsUUID, ValidateIf, IsInt } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID, ValidateIf, IsInt, IsPositive } from 'class-validator';
 
 export class UpdateTrackDto implements TUpdateTrackDto {
   @IsString()
@@ -16,5 +16,6 @@ export class UpdateTrackDto implements TUpdateTrackDto {
   albumId: string | null;
 
   @IsInt()
+  @IsPositive()
   duration: number;
 }
