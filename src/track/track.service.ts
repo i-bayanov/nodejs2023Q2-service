@@ -47,4 +47,14 @@ export class TrackService {
     this.findTrack(id);
     this.tracks = Object.fromEntries(Object.entries(this.tracks).filter(([key]) => key !== id));
   }
+
+  removeArtistFromTracks(artistId: string) {
+    this.tracks = Object.fromEntries(
+      Object.entries(this.tracks).map(([trackId, track]) => {
+        if (track.artistId === artistId) return [trackId, { ...track, artistId: null }];
+
+        return [trackId, track];
+      }),
+    );
+  }
 }

@@ -3,10 +3,14 @@ import { v4 as uuidV4 } from 'uuid';
 
 import { CreateArtistDto, UpdateArtistDto } from './dto';
 import { AlbumService } from 'src/album/album.service';
+import { TrackService } from 'src/track/track.service';
 
 @Injectable()
 export class ArtistService {
-  constructor(private readonly albumService: AlbumService) {}
+  constructor(
+    private readonly albumService: AlbumService,
+    private readonly trackService: TrackService,
+  ) {}
 
   private artists: { [id: string]: Artist } = {};
 
@@ -60,5 +64,6 @@ export class ArtistService {
     this.findArtist(id);
     this.artists = Object.fromEntries(Object.entries(this.artists).filter(([key]) => key !== id));
     this.albumService.removeArtistFromAlbums(id);
+    this.trackService.removeArtistFromTracks(id);
   }
 }
