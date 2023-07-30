@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { /* ConflictException,*/ Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuidV4 } from 'uuid';
 
 import { CreateArtistDto, UpdateArtistDto } from './dto';
@@ -7,13 +7,13 @@ import { CreateArtistDto, UpdateArtistDto } from './dto';
 export class ArtistService {
   private artists: { [id: string]: Artist } = {};
 
-  private checkArtistExistance(createArtistDto: CreateArtistDto) {
-    const isArtistAlreadyExists = Object.values(this.artists).some(
-      (artist) => artist.name === createArtistDto.name,
-    );
-    if (isArtistAlreadyExists)
-      throw new ConflictException(`Artist ${createArtistDto.name} already exists`);
-  }
+  // private checkArtistExistance(createArtistDto: CreateArtistDto) {
+  //   const isArtistAlreadyExists = Object.values(this.artists).some(
+  //     (artist) => artist.name === createArtistDto.name,
+  //   );
+  //   if (isArtistAlreadyExists)
+  //     throw new ConflictException(`Artist ${createArtistDto.name} already exists`);
+  // }
 
   private findArtist(id: string): Artist {
     const artist = this.artists[id];
@@ -23,7 +23,7 @@ export class ArtistService {
   }
 
   create(createArtistDto: CreateArtistDto) {
-    this.checkArtistExistance(createArtistDto);
+    // this.checkArtistExistance(createArtistDto);
 
     const id = uuidV4();
     const { name, grammy } = createArtistDto;
