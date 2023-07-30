@@ -5,18 +5,12 @@ import { CreateUserDto, UpdateUserDto } from './dto';
 
 @Injectable()
 export class UserService {
-  private users: User[] = [];
+  private users: { [id: string]: User } = {};
 
   private validateID(id: string) {
     if (!uuidValidate(id)) throw new HttpException('User id is invalid', HttpStatus.BAD_REQUEST);
-  }
 
-  private findUserIndex(id: string) {
-    const userIndex = this.users.findIndex((user) => user.id === id);
-
-    if (userIndex === -1) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-
-    return userIndex;
+    if (!(id in this.users)) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
   }
 
   private validateOldPassword(updateUserDto: UpdateUserDto, user: User) {
@@ -43,7 +37,9 @@ export class UserService {
   }
 
   private checkUserExistance(createUserDto: CreateUserDto) {
-    const isUserAlreadyExists = this.users.some((user) => user.login === createUserDto.login);
+    const isUserAlreadyExists = Object.values(this.users).some(
+      (user) => user.login === createUserDto.login,
+    );
     if (isUserAlreadyExists)
       throw new HttpException(`User ${createUserDto.login} already exists`, HttpStatus.CONFLICT);
   }
@@ -72,13 +68,13 @@ export class UserService {
     const newUser: User = { id, login, password, createdAt, updatedAt, version };
     const userWoPassword: UserWoPassword = { id, login, createdAt, updatedAt, version };
 
-    this.users.push(newUser);
+    this.users[id] = newUser;
 
     return userWoPassword;
   }
 
   findAll(): UserWoPassword[] {
-    return this.users.map((user) => {
+    return Object.values(this.users).map((user) => {
       const { password, ...userWoPassword } = user;
 
       return userWoPassword;
@@ -87,7 +83,7 @@ export class UserService {
 
   findOne(id: string): UserWoPassword {
     this.validateID(id);
-    const user = this.users[this.findUserIndex(id)];
+    const user = this.users[id];
     const { password, ...userWoPassword } = user;
 
     return userWoPassword;
@@ -95,8 +91,7 @@ export class UserService {
 
   update(id: string, updateUserDto: UpdateUserDto): UserWoPassword {
     this.validateID(id);
-    const userIndex = this.findUserIndex(id);
-    const user = this.users[userIndex];
+    const user = this.users[id];
     this.validateOldPassword(updateUserDto, user);
     this.validateUpdatePasswordBody(updateUserDto);
 
@@ -107,7 +102,7 @@ export class UserService {
       version: user.version + 1,
     };
 
-    this.users[userIndex] = updatedUser;
+    this.users[id] = updatedUser;
 
     const { password, ...userWoPassword } = updatedUser;
 
@@ -116,7 +111,6 @@ export class UserService {
 
   remove(id: string) {
     this.validateID(id);
-    const userIndex = this.findUserIndex(id);
-    this.users.splice(userIndex, 1);
+    this.users = Object.fromEntries(Object.entries(this.users).filter(([key]) => key !== id));
   }
 }
