@@ -1,5 +1,5 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { v4 as uuidV4, validate as uuidValidate } from 'uuid';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { v4 as uuidV4 } from 'uuid';
 
 import { CreateArtistDto, UpdateArtistDto } from './dto';
 
@@ -7,34 +7,22 @@ import { CreateArtistDto, UpdateArtistDto } from './dto';
 export class ArtistService {
   private artists: { [id: string]: Artist } = {};
 
-  private validateID(id: string) {
-    if (!uuidValidate(id)) throw new HttpException('Artist id is invalid', HttpStatus.BAD_REQUEST);
-
-    if (!(id in this.artists)) throw new HttpException('Artist not found', HttpStatus.NOT_FOUND);
-  }
-
-  private validateArtistBody(body: CreateArtistDto | UpdateArtistDto) {
-    const isArtistNameValid =
-      'name' in body && typeof body.name === 'string' && body.name.length > 0;
-    const isArtistGrammyValid = 'grammy' in body && typeof body.grammy === 'boolean';
-
-    if (!isArtistNameValid || !isArtistGrammyValid)
-      throw new HttpException(
-        'Request body does not contain required fields',
-        HttpStatus.BAD_REQUEST,
-      );
-  }
-
   private checkArtistExistance(createArtistDto: CreateArtistDto) {
     const isArtistAlreadyExists = Object.values(this.artists).some(
       (artist) => artist.name === createArtistDto.name,
     );
     if (isArtistAlreadyExists)
-      throw new HttpException(`Artist ${createArtistDto.name} already exists`, HttpStatus.CONFLICT);
+      throw new ConflictException(`Artist ${createArtistDto.name} already exists`);
+  }
+
+  private findArtist(id: string): Artist {
+    const artist = this.artists[id];
+    if (!artist) throw new NotFoundException('Artist not found');
+
+    return artist;
   }
 
   create(createArtistDto: CreateArtistDto) {
-    this.validateArtistBody(createArtistDto);
     this.checkArtistExistance(createArtistDto);
 
     const id = uuidV4();
@@ -51,14 +39,11 @@ export class ArtistService {
   }
 
   findOne(id: string) {
-    this.validateID(id);
-
-    return this.artists[id];
+    return this.findArtist(id);
   }
 
   update(id: string, updateArtistDto: UpdateArtistDto) {
-    this.validateID(id);
-    this.validateArtistBody(updateArtistDto);
+    this.findArtist(id);
 
     const { name, grammy } = updateArtistDto;
     const updatedArtist = { id, name, grammy };
@@ -69,7 +54,7 @@ export class ArtistService {
   }
 
   remove(id: string) {
-    this.validateID(id);
+    this.findArtist(id);
     this.artists = Object.fromEntries(Object.entries(this.artists).filter(([key]) => key !== id));
   }
 }
