@@ -2,9 +2,12 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuidV4 } from 'uuid';
 
 import { CreateAlbumDto, UpdateAlbumDto } from './dto';
+import { TrackService } from 'src/track/track.service';
 
 @Injectable()
 export class AlbumService {
+  constructor(private readonly trackService: TrackService) {}
+
   private albums: { [id: string]: Album } = {};
 
   private findAlbum(id: string): Album {
@@ -46,6 +49,7 @@ export class AlbumService {
   remove(id: string) {
     this.findAlbum(id);
     this.albums = Object.fromEntries(Object.entries(this.albums).filter(([key]) => key !== id));
+    this.trackService.removeAlbumFromTracks(id);
   }
 
   removeArtistFromAlbums(artistId: string) {

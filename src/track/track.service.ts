@@ -57,4 +57,14 @@ export class TrackService {
       }),
     );
   }
+
+  removeAlbumFromTracks(albumId: string) {
+    this.tracks = Object.fromEntries(
+      Object.entries(this.tracks).map(([trackId, track]) => {
+        if (track.albumId === albumId) return [trackId, { ...track, albumId: null }];
+
+        return [trackId, track];
+      }),
+    );
+  }
 }
