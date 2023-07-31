@@ -14,7 +14,10 @@ import { FavsService } from 'src/favs/favs.service';
 @Injectable()
 export class ArtistService {
   constructor(
+    @Inject(forwardRef(() => AlbumService))
     private readonly albumService: AlbumService,
+
+    @Inject(forwardRef(() => TrackService))
     private readonly trackService: TrackService,
 
     @Inject(forwardRef(() => FavsService))

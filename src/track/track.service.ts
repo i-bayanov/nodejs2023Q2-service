@@ -1,14 +1,28 @@
-import { Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+  forwardRef,
+} from '@nestjs/common';
 import { v4 as uuidV4 } from 'uuid';
 
 import { CreateTrackDto, UpdateTrackDto } from './dto';
 import { FavsService } from 'src/favs/favs.service';
+import { ArtistService } from 'src/artist/artist.service';
+import { AlbumService } from 'src/album/album.service';
 
 @Injectable()
 export class TrackService {
   constructor(
     @Inject(forwardRef(() => FavsService))
     private readonly favsService: FavsService,
+
+    @Inject(forwardRef(() => ArtistService))
+    private readonly artistService: ArtistService,
+
+    @Inject(forwardRef(() => AlbumService))
+    private readonly albumService: AlbumService,
   ) {}
 
   private tracks: { [id: string]: Track } = {};
@@ -20,9 +34,30 @@ export class TrackService {
     return track;
   }
 
+  private checkAlbumAndArtistExistence(albumId: string | null, artistId: string | null) {
+    if (albumId) {
+      try {
+        this.albumService.findOne(albumId);
+      } catch {
+        throw new UnprocessableEntityException(`Album with id ${albumId} not found`);
+      }
+    }
+
+    if (artistId) {
+      try {
+        this.artistService.findOne(artistId);
+      } catch {
+        throw new UnprocessableEntityException(`Artist with id ${artistId} not found`);
+      }
+    }
+  }
+
   create(createTrackDto: CreateTrackDto) {
     const id = uuidV4();
     const { albumId, artistId, duration, name } = createTrackDto;
+
+    this.checkAlbumAndArtistExistence(albumId, artistId);
+
     const newTrack: Track = { albumId, artistId, duration, id, name };
 
     this.tracks[id] = newTrack;
@@ -42,6 +77,9 @@ export class TrackService {
     this.findTrack(id);
 
     const { albumId, artistId, duration, name } = updateTrackDto;
+
+    this.checkAlbumAndArtistExistence(albumId, artistId);
+
     const updatedTrack = { id, albumId, artistId, duration, name };
 
     this.tracks[id] = updatedTrack;
