@@ -1,5 +1,5 @@
 interface Favorites {
-  artists: string[]; // favorite artists ids
-  albums: string[]; // favorite albums ids
-  tracks: string[]; // favorite tracks ids
+  artists: Set<string>; // favorite artists ids
+  albums: Set<string>; // favorite albums ids
+  tracks: Set<string>; // favorite tracks ids
 }

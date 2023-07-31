@@ -1,15 +1,24 @@
-import { /* ConflictException,*/ Injectable, NotFoundException } from '@nestjs/common';
+import {
+  /* ConflictException,*/ Inject,
+  Injectable,
+  NotFoundException,
+  forwardRef,
+} from '@nestjs/common';
 import { v4 as uuidV4 } from 'uuid';
 
 import { CreateArtistDto, UpdateArtistDto } from './dto';
 import { AlbumService } from 'src/album/album.service';
 import { TrackService } from 'src/track/track.service';
+import { FavsService } from 'src/favs/favs.service';
 
 @Injectable()
 export class ArtistService {
   constructor(
     private readonly albumService: AlbumService,
     private readonly trackService: TrackService,
+
+    @Inject(forwardRef(() => FavsService))
+    private readonly favsService: FavsService,
   ) {}
 
   private artists: { [id: string]: Artist } = {};
@@ -65,5 +74,6 @@ export class ArtistService {
     this.artists = Object.fromEntries(Object.entries(this.artists).filter(([key]) => key !== id));
     this.albumService.removeArtistFromAlbums(id);
     this.trackService.removeArtistFromTracks(id);
+    this.favsService.removeArtist(id);
   }
 }
