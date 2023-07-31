@@ -13,12 +13,22 @@ paths:
       responses:
         '201':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: object
     get:
       operationId: UserController_findAll
       parameters: []
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
   /user/{id}:
     get:
       operationId: UserController_findOne
@@ -31,6 +41,10 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: object
     put:
       operationId: UserController_update
       parameters:
@@ -48,6 +62,10 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: object
     delete:
       operationId: UserController_remove
       parameters:
@@ -72,12 +90,22 @@ paths:
       responses:
         '201':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: object
     get:
       operationId: ArtistController_findAll
       parameters: []
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
   /artist/{id}:
     get:
       operationId: ArtistController_findOne
@@ -90,6 +118,10 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: object
     put:
       operationId: ArtistController_update
       parameters:
@@ -131,12 +163,22 @@ paths:
       responses:
         '201':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: object
     get:
       operationId: AlbumController_findAll
       parameters: []
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
   /album/{id}:
     get:
       operationId: AlbumController_findOne
@@ -149,6 +191,10 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: object
     put:
       operationId: AlbumController_update
       parameters:
@@ -166,6 +212,10 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: object
     delete:
       operationId: AlbumController_remove
       parameters:
@@ -190,12 +240,22 @@ paths:
       responses:
         '201':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: object
     get:
       operationId: TrackController_findAll
       parameters: []
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
   /track/{id}:
     get:
       operationId: TrackController_findOne
@@ -208,6 +268,10 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                type: object
     put:
       operationId: TrackController_update
       parameters:
@@ -323,25 +387,109 @@ components:
   schemas:
     CreateUserDto:
       type: object
-      properties: {}
+      properties:
+        login:
+          type: string
+        password:
+          type: string
+      required:
+        - login
+        - password
     UpdateUserDto:
       type: object
-      properties: {}
+      properties:
+        oldPassword:
+          type: string
+        newPassword:
+          type: string
+      required:
+        - oldPassword
+        - newPassword
     CreateArtistDto:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+        grammy:
+          type: boolean
+      required:
+        - name
+        - grammy
     UpdateArtistDto:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+        grammy:
+          type: boolean
+      required:
+        - name
+        - grammy
     CreateAlbumDto:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+        year:
+          type: number
+          minimum: 1
+        artistId:
+          type: string
+          nullable: true
+      required:
+        - name
+        - year
+        - artistId
     UpdateAlbumDto:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+        year:
+          type: number
+          minimum: 1
+        artistId:
+          type: string
+          nullable: true
+      required:
+        - name
+        - year
+        - artistId
     CreateTrackDto:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+        artistId:
+          type: string
+          nullable: true
+        albumId:
+          type: string
+          nullable: true
+        duration:
+          type: number
+          minimum: 1
+      required:
+        - name
+        - artistId
+        - albumId
+        - duration
     UpdateTrackDto:
       type: object
-      properties: {}
+      properties:
+        name:
+          type: string
+        artistId:
+          type: string
+          nullable: true
+        albumId:
+          type: string
+          nullable: true
+        duration:
+          type: number
+          minimum: 1
+      required:
+        - name
+        - artistId
+        - albumId
+        - duration
