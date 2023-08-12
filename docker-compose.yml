@@ -35,3 +35,4 @@ services:
 
 networks:
   my-app-network:
+    name: 'my-app-network'
