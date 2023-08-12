@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  rest-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rest-service
+    depends_on:
+      - postgresql
+    ports:
+      - '${PORT}:${PORT}'
+    volumes:
+      - ./src:/usr/src/app/src
+    networks:
+      - my-app-network
+
+  postgresql:
+    build:
+      context: ./PostgreSQL
+      dockerfile: Dockerfile
+    container_name: postgresql
+    restart: unless-stopped
+    ports:
+      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
+    volumes:
+      - ./PostgreSQL/data:/var/lib/postgresql/data
+      - ./PostgreSQL/logs:/logs
+    environment:
+      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
+      PGDATA: '/var/lib/postgresql/data/pgdata'
+    networks:
+      - my-app-network
+    command: postgres -c logging_collector=on -c log_destination=stderr -c log_directory=/logs
+
+networks:
+  my-app-network:
