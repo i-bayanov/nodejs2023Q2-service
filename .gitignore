@@ -3,7 +3,6 @@
 /node_modules
 
 # Logs
-logs
 *.log
 npm-debug.log*
 pnpm-debug.log*
@@ -35,3 +34,8 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 .env
+
+PostgreSQL/data/*
+!PostgreSQL/data/.gitkeep
+PostgreSQL/logs/*
+!PostgreSQL/logs/.gitkeep
