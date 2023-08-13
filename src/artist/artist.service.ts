@@ -8,7 +8,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { CreateArtistDto, UpdateArtistDto } from './dto';
-import { AlbumService } from 'src/album/album.service';
 import { TrackService } from 'src/track/track.service';
 import { FavsService } from 'src/favs/favs.service';
 
@@ -17,9 +16,6 @@ import { Artist } from './entities/artist.entity';
 @Injectable()
 export class ArtistService {
   constructor(
-    @Inject(forwardRef(() => AlbumService))
-    private readonly albumService: AlbumService,
-
     @Inject(forwardRef(() => TrackService))
     private readonly trackService: TrackService,
 
@@ -74,7 +70,6 @@ export class ArtistService {
 
     if (!deleteResult.affected) throw new NotFoundException('Artist not found');
 
-    this.albumService.removeArtistFromAlbums(id);
     this.trackService.removeArtistFromTracks(id);
     this.favsService.removeArtist(id);
   }

@@ -37,7 +37,7 @@ export class TrackService {
   private async checkAlbumAndArtistExistence(albumId: string | null, artistId: string | null) {
     if (albumId) {
       try {
-        this.albumService.findOne(albumId);
+        await this.albumService.findOne(albumId);
       } catch {
         throw new UnprocessableEntityException(`Album with id ${albumId} not found`);
       }
