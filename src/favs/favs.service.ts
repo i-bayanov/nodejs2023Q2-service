@@ -22,9 +22,9 @@ export class FavsService {
     tracks: new Set<string>(),
   };
 
-  addTrack(id: string) {
+  async addTrack(id: string) {
     try {
-      this.trackService.findOne(id);
+      await this.trackService.findOne(id);
     } catch {
       throw new UnprocessableEntityException(`Track with id ${id} not found`);
     }
@@ -61,8 +61,8 @@ export class FavsService {
     const albums = await Promise.all(
       Array.from(this.favorites.albums).map((albumUuid) => this.albumService.findOne(albumUuid)),
     );
-    const tracks = Array.from(this.favorites.tracks).map((trackUuid) =>
-      this.trackService.findOne(trackUuid),
+    const tracks = await Promise.all(
+      Array.from(this.favorites.tracks).map((trackUuid) => this.trackService.findOne(trackUuid)),
     );
 
     return { artists, albums, tracks };

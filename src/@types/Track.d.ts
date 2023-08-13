@@ -1,4 +1,4 @@
-interface Track {
+interface ITrack {
   id: string; // uuid v4
   name: string;
   artistId: string | null; // refers to Artist
@@ -6,5 +6,5 @@ interface Track {
   duration: number; // integer number
 }
 
-type TCreateTrackDto = Omit<Track, 'id'>;
-type TUpdateTrackDto = Omit<Track, 'id'>;
+type TCreateTrackDto = Omit<ITrack, 'id'>;
+type TUpdateTrackDto = Omit<ITrack, 'id'>;
