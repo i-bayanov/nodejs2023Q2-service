@@ -22,6 +22,7 @@ import { AppService } from './app.service';
       database: process.env.POSTGRES_DB,
       autoLoadEntities: true,
       synchronize: false,
+      retryAttempts: 100,
     }),
     UserModule,
     ArtistModule,
