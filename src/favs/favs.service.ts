@@ -42,9 +42,9 @@ export class FavsService {
     this.favorites.albums.add(id);
   }
 
-  addArtist(id: string) {
+  async addArtist(id: string) {
     try {
-      this.artistService.findOne(id);
+      await this.artistService.findOne(id);
     } catch {
       throw new UnprocessableEntityException(`Artist with id ${id} not found`);
     }
@@ -52,9 +52,11 @@ export class FavsService {
     this.favorites.artists.add(id);
   }
 
-  findAll() {
-    const artists = Array.from(this.favorites.artists).map((artistUuid) =>
-      this.artistService.findOne(artistUuid),
+  async findAll() {
+    const artists = await Promise.all(
+      Array.from(this.favorites.artists).map((artistUuid) =>
+        this.artistService.findOne(artistUuid),
+      ),
     );
     const albums = Array.from(this.favorites.albums).map((albumUuid) =>
       this.albumService.findOne(albumUuid),

@@ -34,7 +34,7 @@ export class TrackService {
     return track;
   }
 
-  private checkAlbumAndArtistExistence(albumId: string | null, artistId: string | null) {
+  private async checkAlbumAndArtistExistence(albumId: string | null, artistId: string | null) {
     if (albumId) {
       try {
         this.albumService.findOne(albumId);
@@ -45,18 +45,18 @@ export class TrackService {
 
     if (artistId) {
       try {
-        this.artistService.findOne(artistId);
+        await this.artistService.findOne(artistId);
       } catch {
         throw new UnprocessableEntityException(`Artist with id ${artistId} not found`);
       }
     }
   }
 
-  create(createTrackDto: CreateTrackDto) {
+  async create(createTrackDto: CreateTrackDto) {
     const id = uuidV4();
     const { albumId, artistId, duration, name } = createTrackDto;
 
-    this.checkAlbumAndArtistExistence(albumId, artistId);
+    await this.checkAlbumAndArtistExistence(albumId, artistId);
 
     const newTrack: Track = { albumId, artistId, duration, id, name };
 
@@ -73,12 +73,12 @@ export class TrackService {
     return this.findTrack(id);
   }
 
-  update(id: string, updateTrackDto: UpdateTrackDto) {
+  async update(id: string, updateTrackDto: UpdateTrackDto) {
     this.findTrack(id);
 
     const { albumId, artistId, duration, name } = updateTrackDto;
 
-    this.checkAlbumAndArtistExistence(albumId, artistId);
+    await this.checkAlbumAndArtistExistence(albumId, artistId);
 
     const updatedTrack = { id, albumId, artistId, duration, name };
 

@@ -34,21 +34,21 @@ export class AlbumService {
     return album;
   }
 
-  private checkArtistExistence(artistId: string | null) {
+  private async checkArtistExistence(artistId: string | null) {
     if (artistId) {
       try {
-        this.artistService.findOne(artistId);
+        await this.artistService.findOne(artistId);
       } catch {
         throw new UnprocessableEntityException(`Artist with id ${artistId} not found`);
       }
     }
   }
 
-  create(createAlbumDto: CreateAlbumDto) {
+  async create(createAlbumDto: CreateAlbumDto) {
     const id = uuidV4();
     const { artistId, name, year } = createAlbumDto;
 
-    this.checkArtistExistence(artistId);
+    await this.checkArtistExistence(artistId);
 
     const newAlbum: Album = { artistId, id, name, year };
 
@@ -65,12 +65,12 @@ export class AlbumService {
     return this.findAlbum(id);
   }
 
-  update(id: string, updateAlbumDto: UpdateAlbumDto) {
+  async update(id: string, updateAlbumDto: UpdateAlbumDto) {
     this.findAlbum(id);
 
     const { artistId, name, year } = updateAlbumDto;
 
-    this.checkArtistExistence(artistId);
+    await this.checkArtistExistence(artistId);
 
     const updatedAlbum: Album = { artistId, id, name, year };
 
