@@ -7,7 +7,7 @@ interface IUser {
   updatedAt: string; // timestamp of last update
 }
 
-type UserWoPassword = Omit<User, 'password'>;
+type UserWoPassword = Omit<IUser, 'password'>;
 
 interface ICreateUserDto {
   login: string;

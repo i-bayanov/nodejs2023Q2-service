@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { v4 as uuidV4 } from 'uuid';
 
 import { CreateUserDto, UpdateUserDto } from './dto';
 import { User } from './entities/user.entity';
@@ -32,31 +31,30 @@ export class UserService {
     return user;
   }
 
-  async create(createUserDto: CreateUserDto): Promise<UserWoPassword> {
+  async create(createUserDto: CreateUserDto) {
     await this.checkUserExistence(createUserDto);
 
-    const id = uuidV4();
     const { login, password } = createUserDto;
     const now = new Date().toDateString();
     const createdAt = now;
     const updatedAt = now;
     const version = 1;
-    const newUser: IUser = { id, login, password, createdAt, updatedAt, version };
+    const newUser = { login, password, createdAt, updatedAt, version };
 
     const createdUser = this.usersRepository.create(newUser);
 
     return (await this.usersRepository.save(createdUser)).toResponse();
   }
 
-  async findAll(): Promise<UserWoPassword[]> {
+  async findAll() {
     return (await this.usersRepository.find()).map((user) => user.toResponse());
   }
 
-  async findOne(id: string): Promise<UserWoPassword> {
+  async findOne(id: string) {
     return (await this.findUser(id)).toResponse();
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<UserWoPassword> {
+  async update(id: string, updateUserDto: UpdateUserDto) {
     const user = await this.findUser(id);
 
     if (user.password !== updateUserDto.oldPassword)
