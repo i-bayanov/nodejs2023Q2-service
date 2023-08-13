@@ -12,6 +12,12 @@ services:
       - '${PORT}:${PORT}'
     volumes:
       - ./src:/usr/src/app/src
+    environment:
+      POSTGRES_HOST: '${POSTGRES_CONTAINER_NAME}'
+      POSTGRES_PORT: '${POSTGRES_PORT}'
+      POSTGRES_USER: '${POSTGRES_USER}'
+      POSTGRES_PASSWORD: '${POSTGRES_PASSWORD}'
+      POSTGRES_DB: '${POSTGRES_DB}'
     networks:
       - my-app-network
 
@@ -19,7 +25,7 @@ services:
     build:
       context: ./PostgreSQL
       dockerfile: Dockerfile
-    container_name: postgresql
+    container_name: '${POSTGRES_CONTAINER_NAME}'
     restart: unless-stopped
     ports:
       - '${POSTGRES_PORT}:${POSTGRES_PORT}'
