@@ -15,17 +15,17 @@ export class FavsController {
   constructor(private readonly favsService: FavsService) {}
 
   @Post('track/:id')
-  addTrack(@Param('id', ParseUUIDPipe) id: string) {
+  addTrack(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.favsService.addTrack(id);
   }
 
   @Post('album/:id')
-  addAlbum(@Param('id', ParseUUIDPipe) id: string) {
+  addAlbum(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.favsService.addAlbum(id);
   }
 
   @Post('artist/:id')
-  addArtist(@Param('id', ParseUUIDPipe) id: string) {
+  addArtist(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.favsService.addArtist(id);
   }
 
@@ -36,19 +36,19 @@ export class FavsController {
 
   @Delete('track/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeTrack(@Param('id', ParseUUIDPipe) id: string) {
+  removeTrack(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.favsService.removeTrack(id);
   }
 
   @Delete('album/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeAlbum(@Param('id', ParseUUIDPipe) id: string) {
+  removeAlbum(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.favsService.removeAlbum(id);
   }
 
   @Delete('artist/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  removeArtist(@Param('id', ParseUUIDPipe) id: string) {
+  removeArtist(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.favsService.removeArtist(id);
   }
 }

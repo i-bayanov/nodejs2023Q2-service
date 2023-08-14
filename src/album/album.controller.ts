@@ -28,18 +28,21 @@ export class AlbumController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
+  findOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.albumService.findOne(id);
   }
 
   @Put(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateAlbumDto: UpdateAlbumDto) {
+  update(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Body() updateAlbumDto: UpdateAlbumDto,
+  ) {
     return this.albumService.update(id, updateAlbumDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', ParseUUIDPipe) id: string) {
+  remove(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.albumService.remove(id);
   }
 }

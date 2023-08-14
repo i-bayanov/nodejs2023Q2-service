@@ -28,18 +28,21 @@ export class TrackController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
+  findOne(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.trackService.findOne(id);
   }
 
   @Put(':id')
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateTrackDto: UpdateTrackDto) {
+  update(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Body() updateTrackDto: UpdateTrackDto,
+  ) {
     return this.trackService.update(id, updateTrackDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id', ParseUUIDPipe) id: string) {
+  remove(@Param('id', new ParseUUIDPipe({ version: '4' })) id: string) {
     return this.trackService.remove(id);
   }
 }
