@@ -1,23 +1,14 @@
-import {
-  /* ConflictException,*/ Inject,
-  Injectable,
-  NotFoundException,
-  forwardRef,
-} from '@nestjs/common';
+import { /* ConflictException,*/ Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { CreateArtistDto, UpdateArtistDto } from './dto';
-import { FavsService } from 'src/favs/favs.service';
 
 import { Artist } from './entities/artist.entity';
 
 @Injectable()
 export class ArtistService {
   constructor(
-    @Inject(forwardRef(() => FavsService))
-    private readonly favsService: FavsService,
-
     @InjectRepository(Artist)
     private artistsRepository: Repository<Artist>,
   ) {}
@@ -65,7 +56,5 @@ export class ArtistService {
     const deleteResult = await this.artistsRepository.delete(id);
 
     if (!deleteResult.affected) throw new NotFoundException('Artist not found');
-
-    this.favsService.removeArtist(id);
   }
 }

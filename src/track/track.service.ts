@@ -1,18 +1,14 @@
-import { Inject, Injectable, NotFoundException, forwardRef } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { CreateTrackDto, UpdateTrackDto } from './dto';
-import { FavsService } from 'src/favs/favs.service';
 
 import { Track } from './entities/track.entity';
 
 @Injectable()
 export class TrackService {
   constructor(
-    @Inject(forwardRef(() => FavsService))
-    private readonly favsService: FavsService,
-
     @InjectRepository(Track)
     private trackRepository: Repository<Track>,
   ) {}
@@ -50,7 +46,5 @@ export class TrackService {
     const deleteResult = await this.trackRepository.delete(id);
 
     if (!deleteResult.affected) throw new NotFoundException('Track not found');
-
-    this.favsService.removeTrack(id);
   }
 }
