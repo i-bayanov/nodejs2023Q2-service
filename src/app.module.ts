@@ -1,6 +1,8 @@
+import { APP_GUARD } from '@nestjs/core';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtService } from '@nestjs/jwt';
 
 import { UserModule } from './user/user.module';
 import { ArtistModule } from './artist/artist.module';
@@ -10,6 +12,7 @@ import { FavsModule } from './favs/favs.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Module({
   imports: [
@@ -36,6 +39,6 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, JwtService, { provide: APP_GUARD, useClass: AuthGuard }],
 })
 export class AppModule {}
