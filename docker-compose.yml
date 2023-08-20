@@ -13,6 +13,7 @@ services:
     volumes:
       - ./src:/usr/src/app/src
     environment:
+      PORT: '${PORT}'
       POSTGRES_HOST: '${POSTGRES_CONTAINER_NAME}'
       POSTGRES_PORT: '${POSTGRES_PORT}'
       POSTGRES_USER: '${POSTGRES_USER}'
