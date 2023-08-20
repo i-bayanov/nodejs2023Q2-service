@@ -4,13 +4,14 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 // import { load, dump } from 'js-yaml';
 
+import { PORT } from './env';
+
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
-  const PORT = parseInt(process.env.PORT, 10) || 4000;
 
   const config = new DocumentBuilder().setTitle('Home Library Service').setVersion('1.0').build();
   const document = SwaggerModule.createDocument(app, config);

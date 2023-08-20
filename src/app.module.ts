@@ -14,16 +14,18 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { AuthGuard } from 'src/auth/auth.guard';
 
+import { postgresHost, postgresPort, postgresUser, postgresPassword, postgresDB } from 'src/env';
+
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.POSTGRES_HOST,
-      port: parseInt(process.env.POSTGRES_PORT, 10),
-      username: process.env.POSTGRES_USER,
-      password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DB,
+      host: postgresHost,
+      port: postgresPort,
+      username: postgresUser,
+      password: postgresPassword,
+      database: postgresDB,
       autoLoadEntities: true,
       synchronize: false,
       retryAttempts: 100,

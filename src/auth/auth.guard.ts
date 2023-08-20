@@ -5,6 +5,8 @@ import { Request } from 'express';
 
 import { IS_PUBLIC_KEY } from 'src/decorators/public.decorator';
 
+import { accessTokenSecret } from 'src/env';
+
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(private jwtService: JwtService, private reflector: Reflector) {}
@@ -29,7 +31,7 @@ export class AuthGuard implements CanActivate {
 
     try {
       await this.jwtService.verifyAsync<JWTPayload>(token, {
-        secret: process.env.JWT_SECRET_KEY,
+        secret: accessTokenSecret,
       });
     } catch {
       throw new UnauthorizedException();

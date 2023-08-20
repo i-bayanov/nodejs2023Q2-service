@@ -9,6 +9,14 @@ import { RefreshDto } from './dto/refresh.dto';
 
 import { User } from 'src/user/entities/user.entity';
 
+import {
+  cryptSault,
+  accessTokenSecret,
+  refreshTokenSecret,
+  accessTokenExpire,
+  refreshTokenExpire,
+} from 'src/env';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -36,7 +44,7 @@ export class AuthService {
     await this.checkUserExistence(signUpLoginDto);
 
     const { login, password } = signUpLoginDto;
-    const passwordHash = await hash(password, parseInt(process.env.CRYPT_SALT, 10) || 10);
+    const passwordHash = await hash(password, cryptSault);
     const now = new Date().toDateString();
     const createdAt = now;
     const updatedAt = now;
@@ -59,12 +67,12 @@ export class AuthService {
 
     const payload: JWTPayload = { sub: id, userName: login, createdAt, updatedAt, version };
     const accessToken = await this.jwtService.signAsync(payload, {
-      expiresIn: process.env.TOKEN_EXPIRE_TIME || '1h',
-      secret: process.env.JWT_SECRET_KEY,
+      expiresIn: accessTokenExpire,
+      secret: accessTokenSecret,
     });
     const refreshToken = await this.jwtService.signAsync(payload, {
-      expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME || '24h',
-      secret: process.env.JWT_SECRET_REFRESH_KEY,
+      expiresIn: refreshTokenExpire,
+      secret: refreshTokenSecret,
     });
 
     return { accessToken, refreshToken };
@@ -75,17 +83,17 @@ export class AuthService {
 
     try {
       const oldPayload = await this.jwtService.verifyAsync<JWTPayload>(refreshToken, {
-        secret: process.env.JWT_SECRET_REFRESH_KEY,
+        secret: refreshTokenSecret,
       });
       const { sub, userName, createdAt, updatedAt, version } = oldPayload;
       const payload: JWTPayload = { sub, userName, createdAt, updatedAt, version };
       const newAccessToken = await this.jwtService.signAsync(payload, {
-        expiresIn: process.env.TOKEN_EXPIRE_TIME || '1h',
-        secret: process.env.JWT_SECRET_KEY,
+        expiresIn: accessTokenExpire,
+        secret: accessTokenSecret,
       });
       const newRefreshToken = await this.jwtService.signAsync(payload, {
-        expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME || '24h',
-        secret: process.env.JWT_SECRET_REFRESH_KEY,
+        expiresIn: refreshTokenExpire,
+        secret: refreshTokenSecret,
       });
 
       return { accessToken: newAccessToken, refreshToken: newRefreshToken };
