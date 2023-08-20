@@ -1,9 +1,4 @@
-import {
-  ConflictException,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
@@ -32,7 +27,7 @@ export class AuthService {
 
   private async findUser(login: string): Promise<User> {
     const user = await this.usersRepository.findOneBy({ login });
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new ForbiddenException('User not found');
 
     return user;
   }
@@ -58,7 +53,7 @@ export class AuthService {
     const user = await this.findUser(login);
     const isPasswordCorrect = await compare(password, user.password);
 
-    if (!isPasswordCorrect) throw new UnauthorizedException('Wrong login password pair');
+    if (!isPasswordCorrect) throw new ForbiddenException('Wrong login password pair');
 
     const { id, createdAt, updatedAt, version } = user;
 
@@ -75,9 +70,27 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
-  refresh(refreshDto: RefreshDto) {
+  async refresh(refreshDto: RefreshDto) {
     const { refreshToken } = refreshDto;
 
-    return 'This action adds a new auth';
+    try {
+      const oldPayload = await this.jwtService.verifyAsync<JWTPayload>(refreshToken, {
+        secret: process.env.JWT_SECRET_REFRESH_KEY,
+      });
+      const { sub, userName, createdAt, updatedAt, version } = oldPayload;
+      const payload: JWTPayload = { sub, userName, createdAt, updatedAt, version };
+      const newAccessToken = await this.jwtService.signAsync(payload, {
+        expiresIn: process.env.TOKEN_EXPIRE_TIME || '1h',
+        secret: process.env.JWT_SECRET_KEY,
+      });
+      const newRefreshToken = await this.jwtService.signAsync(payload, {
+        expiresIn: process.env.TOKEN_REFRESH_EXPIRE_TIME || '24h',
+        secret: process.env.JWT_SECRET_REFRESH_KEY,
+      });
+
+      return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+    } catch {
+      throw new ForbiddenException('Refresh token is invalid');
+    }
   }
 }
